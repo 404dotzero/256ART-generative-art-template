@@ -1,3 +1,7 @@
+cd /Users/s003/Dev/256ART-generative-art-template
+python3 -m http.server 8000
+localhost:8000
+
 ## 256ART Generative Art Template
 
 This is a template for creating generative art to be released fully in-chain via 256ART.

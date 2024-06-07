@@ -1,4 +1,5 @@
 let R;  // will hold the Random class instance
+let x=200, y=0.5;
 
 // Recommended class for randomness; remove unneeded functionality
 class Random {
@@ -50,46 +51,62 @@ function setup() {
         c = createCanvas(ih * aspectRatio, ih);
     }
 
-    // Initiate Random class
-    R = new Random();
 
-    // Create white background
+    R = new Random();
     background(255);
 }
+
+// function draw() {
+//     console.log('DRAW')
+    
+//     let amountOfLines = parseInt(inputData["Amount Of Lines"]);
+//     let color = inputData["Paint Color"];
+
+//     background(255);
+
+//     // Color from trait
+//     stroke(color);
+
+//     // Use dimension-agnostic variables (e.g., lineWidth based on canvas width)
+//     strokeWeight(width * 0.05);
+
+//     for (let i = 0; i < amountOfLines; i++) {
+//         // Examples using the Random class
+//         let startX = width * R.random_dec();
+//         let startY = height * R.random_dec();
+//         let endX = width * R.random_dec();
+//         let endY = height * R.random_dec();
+
+//         // Draw line
+//         line(startX, startY, endX, endY);
+//     }
+
+//     // Draw border
+//     noFill();
+//     rect(0, 0, width, height);
+//     noLoop();
+//     window.rendered = c.canvas;
+// }
+
 
 function draw() {
-    // Traits defined in traits.js; live from chain
-    let amountOfLines = parseInt(inputData["Amount Of Lines"]);
-    let color = inputData["Paint Color"];
-
-    // Create white background
-    background(255);
-
-    // Color from trait
-    stroke(color);
-
-    // Use dimension-agnostic variables (e.g., lineWidth based on canvas width)
-    strokeWeight(width * 0.05);
-
-    for (let i = 0; i < amountOfLines; i++) {
-        // Examples using the Random class
-        let startX = width * R.random_dec();
-        let startY = height * R.random_dec();
-        let endX = width * R.random_dec();
-        let endY = height * R.random_dec();
-
-        // Draw line
-        line(startX, startY, endX, endY);
-    }
-
-    // Draw border
-    noFill();
-    rect(0, 0, width, height);
-    noLoop();
-
-    // Set window.rendered to canvas when done rendering
-    // Image generation scripts use this for still images
-    window.rendered = c.canvas;
+  background(200);
+  
+  // Draw a circle
+  // stroke(50);
+  fill(100);
+  // ellipse(x, y, 24, 24);
+  let d = 50;
+  quad(x, y, x, y+d, x+d, y+d, x+d, y);
+  
+  // Jiggling randomly on the horizontal axis
+  x = x + random(-1, 1);
+  // Moving up at a constant speed
+  y = y - 1;
+  
+  // Reset to the bottom
+  if (y < 0) {
+    y = height;
+  }
 }
-
 new p5();
