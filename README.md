@@ -1,5 +1,10 @@
 cd /Users/s003/Dev/256ART-generative-art-template
 python3 -m http.server 8000
+
+win:
+d:
+cd D:\DEV\256ART-generative-art-template
+python -m http.server 8000
 localhost:8000
 
 ## 256ART Generative Art Template
