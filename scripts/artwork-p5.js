@@ -1,10 +1,52 @@
-let R;  // will hold the Random class instance
-// let x=200, y=0.5;
-let time =0;
-let N = 3000;
-let pos = [];
-let vel = [];
-// Recommended class for randomness; remove unneeded functionality
+
+
+class Point2D {
+	constructor(x, y, vx, vy, s, brightness, brightnessFrequency, sizeFrequency) {
+		this.x = x;
+		this.y = y;
+		this.vx = vx;
+		this.vy = vy;
+		this.initialSize = s;
+		this.initialBrightness = brightness;
+		this.brightnessFrequency = brightnessFrequency;
+		this.sizeFrequency = sizeFrequency;
+		this.time = 0;
+	}
+
+	update() {
+		this.x += this.vx;
+		this.y += this.vy;
+		this.time += 0.1;
+		this.s = this.initialSize * (0.5 * (1 + Math.sin(this.sizeFrequency * this.time)));
+		this.brightness = this.initialBrightness * (0.5 * (1 + Math.sin(this.brightnessFrequency * this.time)));
+	}
+
+	setVelocity(vx, vy) {
+		this.vx = vx;
+		this.vy = vy;
+	}
+
+	setSize(s) {
+		this.initialSize = s;
+	}
+
+	setBrightness(brightness) {
+		this.initialBrightness = brightness;
+	}
+
+	setBrightnessFrequency(brightnessFrequency) {
+		this.brightnessFrequency = brightnessFrequency;
+	}
+
+	setSizeFrequency(sizeFrequency) {
+		this.sizeFrequency = sizeFrequency;
+	}
+
+	getInfo() {
+		return `Point at (${this.x}, ${this.y}) with velocity (${this.vx}, ${this.vy}), size ${this.s.toFixed(2)}, brightness ${this.brightness.toFixed(2)}, brightness frequency ${this.brightnessFrequency}, size frequency ${this.sizeFrequency}`;
+	}
+}
+
 class Random {
 	constructor() {
 		let offset = 0;
@@ -36,11 +78,19 @@ class Random {
 	// Choose random item from array
 	random_choice = (list) => list[this.random_int(0, list.length - 1)];
 }
+
 let c;
+let R;  //RANDOM
+const N = 5000;
+const D = 4
+const spacer = 10
+const points = [];
+
+
 function setup() {
 	let aspectRatio = 0.75;
 
-	// Set pixel density; normalizing the p5js canvas
+
 	pixelDensity(displayDensity());
 	let ih = windowHeight;
 	let iw = windowWidth;
@@ -52,73 +102,86 @@ function setup() {
 	R = new Random();
 	background(0);
 
-
+	
 	for (let i = 0; i < N; i++) {
-    	pos[i] = [R.random_dec()*width, R.random_dec()*height];
-    	vel[i] = [R.random_dec()-0.5, R.random_dec()-0.5];
-    	}
+		const x = R.random_dec()*width;
+		const y = R.random_dec()*height;
+		const vx = R.random_dec()-0.5;
+		const vy = R.random_dec()-0.5;
+		const s = R.random_dec();
+		const brightness = R.random_dec()*2;
+		const brightnessFrequency = R.random_dec()*2;
+		const sizeFrequency = R.random_dec();
+		points.push(new Point2D(x, y, vx, vy, s, brightness, brightnessFrequency, sizeFrequency));
+	}
+
+	
 }
 
-// function draw() {
-//     console.log('DRAW')
-	
-//     let amountOfLines = parseInt(inputData["Amount Of Lines"]);
-//     let color = inputData["Paint Color"];
-
-//     background(255);
-
-//     // Color from trait
-//     stroke(color);
-
-//     // Use dimension-agnostic variables (e.g., lineWidth based on canvas width)
-//     strokeWeight(width * 0.05);
-
-//     for (let i = 0; i < amountOfLines; i++) {
-//         // Examples using the Random class
-//         let startX = width * R.random_dec();
-//         let startY = height * R.random_dec();
-//         let endX = width * R.random_dec();
-//         let endY = height * R.random_dec();
-
-//         // Draw line
-//         line(startX, startY, endX, endY);
-//     }
-
-//     // Draw border
-//     noFill();
-//     rect(0, 0, width, height);
-//     noLoop();
-//     window.rendered = c.canvas;
-// }
 
 
 function draw() {
 	background(0);
 	noStroke();
 	fill(200);
-	let d = 5;
-	let spacer = 10;
-	// quad(x, y, x, y+d, x+d, y+d, x+d, y);
-	// for (let x = 0; x < width; x += spacer) {
-	// 	for (let y = 0; y < height; y += spacer) {
-	// 		quad(x+time, y, x+time, y+d, x+d+time, y+d, x+d+time, y);
-	// 	}
-	// }
 
 	for (let i = 0; i < N; i++) {
-		let x = pos[i][0]+time*vel[i][0];
-		let y = pos[i][1]+time*vel[i][1];
-		x = Math.round(x/spacer)*spacer;
-		y = Math.round(y/spacer)*spacer;
-		console.log(x)
-		if (i==N-1) fill(255,0,0);
-		quad(x, y, x, y+d, x+d, y+d, x+d, y);
+		const x = Math.round(points[i].x/spacer)*spacer;
+		const y = Math.round(points[i].y/spacer)*spacer;
+		if (i == N-1) fill(255,0,0);
+		else {
+			const dimmer = points[i].brightness*255;
+			fill(dimmer,dimmer,dimmer);
+		}
+		s = points[i].s*D;
+		quad(x-s, y-s, x-s, y+s, x+s, y+s, x+s, y-s);
+		points[i].update();
+		if (x>width) points[i].x = 0;
+		if (x<0) points[i].x = width;
+		if (y>height) points[i].y = 0;
+		if (y<0) points[i].y = height;
 	}
-	time +=1;
-	// x = x + random(-1, 1);
-	// y = y - 1;
-	// if (y < 0) {
-	// 	y = height;
-  	// }
+
+	// for (let i = 0; i < N; i++) {
+	// 	let x = pos[i][0]+time*vel[i][0];
+	// 	let y = pos[i][1]+time*vel[i][1];
+	// 	x = Math.round(x/spacer)*spacer;
+	// 	y = Math.round(y/spacer)*spacer;
+	// 	console.log(x)
+	// 	if (i==N-1) fill(255,0,0);
+	// 	quad(x, y, x, y+d, x+d, y+d, x+d, y);
+	// }
+
+
+	// time +=1;
 }
 new p5();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
