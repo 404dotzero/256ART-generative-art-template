@@ -16,7 +16,7 @@ let ownerOfPiece = search.get('ownerOfPiece') || genRandomAddress();
 let blockHash = search.get('blockHash') || "0x" + genHash(64);
 let blockNumber = search.get('blockNumber') || Math.floor(Math.random() * 10000000);
 let prevrandao = search.get('prevrandao') || Math.floor(Number.MAX_SAFE_INTEGER * Math.random());
-let totalSupply = search.get('totalSupply') || Math.floor(Math.random() * 256);
+let totalSupply = search.get('totalSupply') || Math.floor(Math.random() * 512);
 let balanceOfOwner = search.get('balanceOfOwner') || Math.floor(Math.random() * totalSupply);
 let tokenId = search.get('tokenId') || Math.floor(Math.random() * totalSupply);
 

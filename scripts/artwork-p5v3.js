@@ -20,9 +20,8 @@ class Point2D {
 		return 0.395 * (n0 + n1)*0.001;
 	}
 
-	constructor(x, y, vx, vy, s, brightness, brightnessFrequency, sizeFrequency, id, ay, R) {
+	constructor(x, y, vx, vy, s, brightness, brightnessFrequency, sizeFrequency, id, ay) {
 		this.seed = id*123472;
-		this.id = id;
 		this.x = x;
 		this.y = y;
 		this.vx = vx;
@@ -34,30 +33,16 @@ class Point2D {
 		this.time = 0;
 		this.ax = 0;
 		this.ay = ay*0.1;
-		this.R = R;
-		this.randPeriod = 50;
-		this.curRandTime = 0;
-		this.speedRandFreq = R.random_num(0.1,5);
-	}
-	newRandPars(){
-		this.curRandTime = 0;
-		const maxSpeed = 1;
-		this.vx = this.R.random_num(-maxSpeed,maxSpeed)
-		this.vy = this.R.random_num(-maxSpeed,maxSpeed)
-		this.randPeriod = this.R.random_int(60, 680);
 	}
 
 	update() {
-		this.curRandTime += 1;
-		if (this.curRandTime>=this.randPeriod){
-			this.newRandPars()
-
-		}
-		this.x += this.vx*(0.5 +0.5*Math.sin(this.speedRandFreq * this.time+this.id));//*(1+this.simplex1D(this.time/10+6779+this.seed*0.01, 3));
-		this.y += this.vy*(0.5 +0.5*Math.sin(this.speedRandFreq * this.time+this.id));//*this.simplex1D(this.time/10+this.seed*0.01, 3);
+		this.vy += this.ay;
+		this.x += this.vx*(1+this.simplex1D(this.time/10+6779+this.seed*0.01, 3));
+		// console.log(this.simplex1D(this.time/10+this.seed, 5));
+		this.y += this.vy*this.simplex1D(this.time/10+this.seed*0.01, 3);
 		this.time += 0.2;
 		this.s = this.initialSize * (0.5 * (1 + Math.sin(this.sizeFrequency * this.time)));
-		this.brightness = this.initialBrightness * (0.5 +0.5*Math.sin(this.brightnessFrequency * this.time));
+		this.brightness = this.initialBrightness * (0.5 * (1 + Math.sin(this.brightnessFrequency * this.time)));
 	}
 
 	getInfo() {
@@ -99,8 +84,7 @@ class Random {
 
 let c;
 let R;  //RANDOM
-const N = inputData.totalSupply;
-console.log(N)
+const N = 1024;
 const D = 4
 const spacer = 6
 const points = [];
@@ -131,14 +115,8 @@ function setup() {
 		const brightness = R.random_dec()*2;
 		const brightnessFrequency = R.random_dec()*2;
 		const sizeFrequency = R.random_dec();
-		const point = new Point2D(x, y, vx, vy, s, brightness, brightnessFrequency, sizeFrequency , i, R.random_dec(), R)
-		point.update();
-		points.push(point);
+		points.push(new Point2D(x, y, vx, vy, s, brightness, brightnessFrequency, sizeFrequency , i, R.random_dec()));
 	}
-
-	drawFrame()
-
-
 }
 
 
@@ -171,43 +149,10 @@ function draw() {
 		
 		quad(x-s, y-s, x-s, y+s, x+s, y+s, x+s, y-s);
 		points[i].update();
-		if (points[i].x>=width+spacer) points[i].x = 0-spacer;
-		if (points[i].x<0-spacer) points[i].x = width+spacer;
-		if (points[i].y>=height+spacer) points[i].y = 0-spacer;
-		if (points[i].y<0-spacer) points[i].y = height+spacer;
-	}
-
-}
-
-
-
-function drawFrame() {
-	engine();
-	background(0);
-	noStroke();
-	fill(200);
-
-	for (let i = 0; i < N; i++) {
-		const x = Math.round(points[i].x/spacer)*spacer;
-		const y = Math.round(points[i].y/spacer)*spacer;
-		const owned = 1;
-		if (i >= N-owned){
-			s = D;
-			fill(255,0,0);
-			}
-		
-		else {
-			const dimmer = points[i].brightness*255;
-			fill(dimmer,dimmer,dimmer);
-			s = points[i].s*D;
-		}
-		
-		quad(x-s, y-s, x-s, y+s, x+s, y+s, x+s, y-s);
-		points[i].update();
-		if (points[i].x>=width+spacer) points[i].x = 0-spacer;
-		if (points[i].x<0-spacer) points[i].x = width+spacer;
-		if (points[i].y>=height+spacer) points[i].y = 0-spacer;
-		if (points[i].y<0-spacer) points[i].y = height+spacer;
+		if (points[i].x>=width) points[i].x = 0;
+		if (points[i].x<0) points[i].x = width;
+		if (points[i].y>=height) points[i].y = 0;
+		if (points[i].y<0) points[i].y = height;
 	}
 
 }

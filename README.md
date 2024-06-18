@@ -7,6 +7,9 @@ cd D:\DEV\256ART-generative-art-template
 python -m http.server 8000
 localhost:8000
 
+check later
+https://gist.github.com/ktmud/a63778d9d0d37d030d72e6ca0b9ac356
+
 ## 256ART Generative Art Template
 
 This is a template for creating generative art to be released fully in-chain via 256ART.
